@@ -5,7 +5,7 @@ export default function SettingsPage() {
   return (
     <>
       <TopBar title="Settings" />
-      <main className="flex-1 bg-background p-8">
+      <main className="flex-1 bg-background p-6">
         <SettingsContent />
       </main>
     </>

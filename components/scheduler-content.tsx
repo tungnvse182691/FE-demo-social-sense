@@ -279,7 +279,7 @@ export function SchedulerContent() {
       </div>
 
       {/* Top Controls */}
-      <div className="flex items-center justify-between px-8 pb-4">
+      <div className="flex items-center justify-between px-6 pb-4">
         <div className="flex items-center gap-3">
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
             <TabsList className="h-9 bg-secondary">
@@ -315,7 +315,7 @@ export function SchedulerContent() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto px-8 pb-8">
+      <div className="flex-1 overflow-y-auto px-6 pb-6">
         {viewMode === "month" && (
           <MonthView
             calendarDays={calendarDays}

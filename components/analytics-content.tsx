@@ -272,7 +272,7 @@ export function AnalyticsContent() {
   }
 
   return (
-    <main className="flex-1 overflow-y-auto bg-background p-8">
+    <main className="flex-1 overflow-y-auto bg-background p-6">
       <div className="flex flex-col gap-6">
         {/* ── Top filters ── */}
         <div className="flex flex-wrap items-center justify-between gap-3">

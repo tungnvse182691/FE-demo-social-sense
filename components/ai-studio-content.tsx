@@ -337,7 +337,7 @@ export function AIStudioContent() {
       </div>
 
       {/* Right Panel - Main Workspace */}
-      <div className="flex-1 overflow-y-auto bg-background p-8">
+      <div className="flex-1 overflow-y-auto bg-background p-6">
         {/* Sub-page 2A: Trends */}
         {activeSubPage === "trends" && (
           <div className="flex flex-col gap-6">
