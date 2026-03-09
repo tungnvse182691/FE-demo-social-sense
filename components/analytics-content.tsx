@@ -19,6 +19,9 @@ import {
   BarChart3,
   Zap,
   Loader2,
+  MapPin,
+  Plus,
+  Minus,
   Timer,
   Target,
   PlayCircle,
@@ -280,6 +283,8 @@ export function AnalyticsContent() {
   const [sortDir, setSortDir] = useState<SortDir>("desc")
   const [compareHandle, setCompareHandle] = useState("@marketing.vn")
   const [isComparing, setIsComparing] = useState(false)
+  const [expandEngagement, setExpandEngagement] = useState(false)
+  const [engagementTooltip, setEngagementTooltip] = useState<string | null>(null)
 
   const handleCompare = async () => {
     if (!compareHandle.trim()) {
@@ -360,33 +365,104 @@ export function AnalyticsContent() {
 
         {/* ── Section A — KPI cards ── */}
         <div className="grid grid-cols-4 gap-4">
-          {overviewKPIs.map((kpi) => (
-            <Card key={kpi.label} className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
-                    <kpi.icon className="h-5 w-5 text-primary" />
+          {overviewKPIs.map((kpi) => {
+            const isEngagement = kpi.label === "Tổng tương tác"
+            const isReach = kpi.label === "Tổng tiếp cận"
+            const engBreakdown = [
+              { label: "likes", value: "52,400", up: true, insight: "Người dùng 25–34 tuổi chiếm 61% lượt like — nhóm này phản hồi tốt nhất với nội dung video ngắn và infographic. Tập trung sản xuất định dạng này sẽ tiếp tục thúc đẩy lượt like." },
+              { label: "share", value: "18,200", up: true, insight: "Tỷ lệ share tăng 14% so với kỳ trước, chủ yếu đến từ các bài có tiêu đề dạng 'How-to' và danh sách. Đây là tín hiệu tốt cho reach tự nhiên." },
+              { label: "cmts", value: "7,300", up: false, insight: "Lượt bình luận giảm nhẹ do tần suất đăng bài chưa đều. Thêm câu hỏi cuối bài và CTA rõ ràng có thể tăng comment lên 20–30%." },
+            ]
+            const topCities = [
+              { city: "TP. Hồ Chí Minh", pct: "38.4%", value: "185,200" },
+              { city: "Hà Nội", pct: "24.1%", value: "116,300" },
+              { city: "Đà Nẵng", pct: "9.7%", value: "46,800" },
+            ]
+            return (
+              <Card key={kpi.label} className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
+                      <kpi.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-1 text-xs font-medium ${ kpi.up ? "text-emerald-600" : "text-red-500" }`}>
+                        {kpi.up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                        {kpi.change}
+                      </div>
+                      {isEngagement && (
+                        <button
+                          onClick={() => { setExpandEngagement(!expandEngagement); setEngagementTooltip(null) }}
+                          className="flex h-5 w-5 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {expandEngagement ? <Minus className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div
-                    className={`flex items-center gap-1 text-xs font-medium ${
-                      kpi.up ? "text-emerald-600" : "text-red-500"
-                    }`}
-                  >
-                    {kpi.up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
-                    {kpi.change}
-                  </div>
-                </div>
-                <p className="mt-3 text-2xl font-bold text-foreground">{kpi.value}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{kpi.label}</p>
-                <p className={`mt-1.5 flex items-center gap-1 text-xs font-medium ${kpi.up ? "text-emerald-600" : "text-amber-500"}`}>
-                  {kpi.up
-                    ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
-                    : <ArrowDownRight className="h-3.5 w-3.5 shrink-0" />}
-                  {kpi.insight}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="mt-3 text-2xl font-bold text-foreground">{kpi.value}</p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{kpi.label}</p>
+
+                  {/* Engagement breakdown */}
+                  {isEngagement && expandEngagement && (
+                    <div className="mt-3 flex flex-col gap-1.5">
+                      {engBreakdown.map((item) => (
+                        <div key={item.label}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              {item.up
+                                ? <ArrowUpRight className="h-3.5 w-3.5 text-emerald-600" />
+                                : <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
+                              <span className={`text-xs font-semibold ${ item.up ? "text-emerald-600" : "text-red-500" }`}>
+                                {item.value} {item.label}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => setEngagementTooltip(engagementTooltip === item.label ? null : item.label)}
+                              className="flex h-4 w-4 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary transition-colors text-[10px] font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+                          {engagementTooltip === item.label && (
+                            <div className="mt-1.5 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground leading-relaxed">
+                              {item.insight}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Reach top cities */}
+                  {isReach && (
+                    <div className="mt-3 flex flex-col gap-1.5">
+                      {topCities.map((c, i) => (
+                        <div key={c.city} className="flex items-center gap-2">
+                          <span className="text-[11px] font-bold text-muted-foreground w-3">{i + 1}</span>
+                          <MapPin className="h-3 w-3 shrink-0 text-primary" />
+                          <span className="flex-1 text-xs text-foreground font-medium truncate">{c.city}</span>
+                          <span className="text-xs font-semibold text-primary">{c.pct}</span>
+                        </div>
+                      ))}
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        TP.HCM tiếp tục dẫn đầu với <span className="font-semibold text-foreground">185,200</span> lượt tiếp cận — tăng 18% so với tháng trước nhờ chiến dịch hashtag địa phương. Hà Nội tăng trưởng ổn định ở mức <span className="font-semibold text-foreground">+11.3%</span>. Đà Nẵng là điểm bất ngờ: mặc dù quy mô nhỏ hơn nhưng tỷ lệ tương tác trên mỗi tiếp cận cao nhất (<span className="font-semibold text-foreground">22.4%</span>), cho thấy cộng đồng tại đây rất gắn kết — đây là thị trường tiềm năng nên đầu tư thêm nội dung được bản địa hoá.
+                      </p>
+                    </div>
+                  )}
+
+                  {!isEngagement && !isReach && (
+                    <p className={`mt-1.5 flex items-center gap-1 text-xs font-medium ${ kpi.up ? "text-emerald-600" : "text-amber-500" }`}>
+                      {kpi.up
+                        ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+                        : <ArrowDownRight className="h-3.5 w-3.5 shrink-0" />}
+                      {kpi.insight}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
 
         {/* ── Advanced KPI cards (Completion / View Duration / Conversion) ── */}
