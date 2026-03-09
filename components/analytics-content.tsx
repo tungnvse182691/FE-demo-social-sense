@@ -19,6 +19,9 @@ import {
   BarChart3,
   Zap,
   Loader2,
+  Timer,
+  Target,
+  PlayCircle,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -58,10 +61,41 @@ const platformTabs = [
 
 /* ───── Section A — KPI cards ───── */
 const overviewKPIs = [
-  { label: "Tổng tiếp cận", value: "482,300", change: "+15.2%", up: true, icon: Eye },
-  { label: "Tổng tương tác", value: "89,700", change: "+8.6%", up: true, icon: Heart },
-  { label: "Người theo dõi mới", value: "2,340", change: "+22.1%", up: true, icon: Users },
-  { label: "Tỉ lệ tương tác TB", value: "18.6%", change: "-1.3%", up: false, icon: TrendingUp },
+  { label: "Tổng tiếp cận", value: "482,300", change: "+15.2%", up: true, icon: Eye, insight: "Tăng ổn định, bài viết viral tốt" },
+  { label: "Tổng tương tác", value: "89,700", change: "+8.6%", up: true, icon: Heart, insight: "Tương tác khá tốt, tiếp tục duy trì" },
+  { label: "Người theo dõi mới", value: "2,340", change: "+22.1%", up: true, icon: Users, insight: "Tăng trưởng mạnh, hơn trung bình ngành" },
+  { label: "Tỉ lệ tương tác TB", value: "18.6%", change: "-1.3%", up: false, icon: TrendingUp, insight: "Giảm nhẹ, nên tăng tần suất đăng bài" },
+]
+
+/* ───── Section A — Advanced KPI cards ───── */
+const advancedKPIs = [
+  {
+    label: "Tỷ lệ hoàn thành",
+    sublabel: "Completion Rate",
+    value: "72.4%",
+    change: "+4.1%",
+    up: true,
+    icon: PlayCircle,
+    insight: "Cao hơn TB ngành (~65%), nội dung hấp dẫn",
+  },
+  {
+    label: "Thời gian xem TB",
+    sublabel: "Avg. View Duration",
+    value: "1:48",
+    change: "+12s",
+    up: true,
+    icon: Timer,
+    insight: "Tăng đều, khán giả xem lâu hơn mỗi tuần",
+  },
+  {
+    label: "Tỷ lệ chuyển đổi",
+    sublabel: "Conversion Rate",
+    value: "3.2%",
+    change: "-0.3%",
+    up: false,
+    icon: Target,
+    insight: "Giảm nhẹ, cần tối ưu CTA trong bài",
+  },
 ]
 
 /* ───── Section B — Dual-line chart data (30 days) ───── */
@@ -344,6 +378,40 @@ export function AnalyticsContent() {
                 </div>
                 <p className="mt-3 text-2xl font-bold text-foreground">{kpi.value}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{kpi.label}</p>
+                <p className={`mt-1.5 flex items-center gap-1 text-xs font-medium ${kpi.up ? "text-emerald-600" : "text-amber-500"}`}>
+                  {kpi.up
+                    ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+                    : <ArrowDownRight className="h-3.5 w-3.5 shrink-0" />}
+                  {kpi.insight}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* ── Advanced KPI cards (Completion / View Duration / Conversion) ── */}
+        <div className="grid grid-cols-3 gap-4">
+          {advancedKPIs.map((kpi) => (
+            <Card key={kpi.label} className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
+                    <kpi.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className={`flex items-center gap-1 text-xs font-medium ${kpi.up ? "text-emerald-600" : "text-red-500"}`}>
+                    {kpi.up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                    {kpi.change}
+                  </div>
+                </div>
+                <p className="mt-3 text-2xl font-bold text-foreground">{kpi.value}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{kpi.label}</p>
+                <p className="text-xs text-muted-foreground/70">{kpi.sublabel}</p>
+                <p className={`mt-1.5 flex items-center gap-1 text-xs font-medium ${kpi.up ? "text-emerald-600" : "text-amber-500"}`}>
+                  {kpi.up
+                    ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+                    : <ArrowDownRight className="h-3.5 w-3.5 shrink-0" />}
+                  {kpi.insight}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -563,7 +631,7 @@ export function AnalyticsContent() {
               <Sparkles className="h-5 w-5 text-primary" />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-semibold text-foreground">AI Insight</p>
+              <p className="text-sm font-semibold text-foreground">Chuyên gia phân tích</p>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {"Bài đăng dạng video của bạn đạt tương tác cao hơn "}
                 <span className="font-semibold text-foreground">{"2.4×"}</span>
@@ -690,26 +758,26 @@ export function AnalyticsContent() {
                       <m.icon className={`h-4 w-4 ${m.youBetter ? "text-emerald-600" : "text-amber-600"}`} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-muted-foreground">{m.label}</p>
+                      <p className="text-sm text-muted-foreground">{m.label}</p>
                       <div className="mt-1.5 flex items-center gap-4">
                         <div className="flex items-center gap-1.5">
                           <div className="h-2 w-2 rounded-full bg-primary" />
-                          <span className="text-sm font-bold text-foreground">{m.you}</span>
+                          <span className="text-base font-bold text-foreground">{m.you}</span>
                         </div>
-                        <span className="text-xs text-muted-foreground">vs</span>
+                        <span className="text-sm text-muted-foreground">vs</span>
                         <div className="flex items-center gap-1.5">
                           <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
-                          <span className="text-sm font-medium text-muted-foreground">{m.other}</span>
+                          <span className="text-base font-medium text-muted-foreground">{m.other}</span>
                         </div>
                       </div>
                       {m.youBetter ? (
-                        <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-emerald-600">
-                          <ArrowUpRight className="h-3 w-3" />
+                        <p className="mt-1 flex items-center gap-1 text-sm font-medium text-emerald-600">
+                          <ArrowUpRight className="h-4 w-4" />
                           {"Bạn đang làm tốt hơn!"}
                         </p>
                       ) : (
-                        <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-amber-600">
-                          <ArrowDownRight className="h-3 w-3" />
+                        <p className="mt-1 flex items-center gap-1 text-sm font-medium text-amber-600">
+                          <ArrowDownRight className="h-4 w-4" />
                           {"Có thể cải thiện"}
                         </p>
                       )}
@@ -726,8 +794,8 @@ export function AnalyticsContent() {
                   <Sparkles className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-foreground">{"Nhận xét từ AI"}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  <p className="text-sm font-semibold text-foreground">{"Nhận xét từ AI"}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {"Tài khoản của bạn đang tăng trưởng "}
                     <span className="font-semibold text-foreground">{"nhanh hơn 40.4%"}</span>
                     {" so với "}{compareHandle}{" trong 6 tháng qua. Điểm mạnh: tỉ lệ tương tác cao hơn đáng kể ("}

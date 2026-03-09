@@ -5,10 +5,6 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  Zap,
-  Users,
-  Sparkles,
-  Clock,
   CreditCard,
   Shield,
   Loader2,
@@ -26,7 +22,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
@@ -38,78 +33,26 @@ interface PlansDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-const plans = [
+type BillingCycle = "monthly" | "annual"
+
+const planDefs = [
   {
-    id: "trial",
-    name: "Dùng thử",
-    price: null,
-    priceLabel: "Miễn phí",
-    priceSub: "còn 18 ngày",
-    icon: Clock,
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-600",
-    badge: "Đang dùng",
-    badgeBg: "bg-emerald-100 text-emerald-700",
-    border: "border-emerald-300",
+    id: "beginner",
+    name: "Người mới",
+    monthly: "79,000đ",
+    annual: "67,000đ",
     highlight: false,
-    cta: "Đang hoạt động",
-    ctaDisabled: true,
-    features: [
-      "Kết nối không giới hạn tài khoản MXH",
-      "Phân tích hiệu suất bài đăng chi tiết",
-      "Gợi ý thời điểm đăng tối ưu (AI)",
-      "Báo cáo tự động hàng tuần",
-      "Trợ lý nội dung AI",
-      "Hỗ trợ tiếng Việt 24/7",
-    ],
+    cta: "Chọn gói Người mới",
+    features: ["Tính năng 1", "Tính năng 2", "Tính năng 3"],
   },
   {
-    id: "pro",
-    name: "Pro",
-    price: "299,000",
-    priceLabel: "299.000đ",
-    priceSub: "/ tháng",
-    icon: Zap,
-    iconBg: "bg-primary/10",
-    iconColor: "text-primary",
-    badge: "Phổ biến nhất",
-    badgeBg: "bg-primary text-primary-foreground",
-    border: "border-primary",
+    id: "advanced",
+    name: "Nâng cao",
+    monthly: "99,000đ",
+    annual: "84,000đ",
     highlight: true,
-    cta: "Chọn gói Pro",
-    ctaDisabled: false,
-    features: [
-      "Tất cả tính năng bản dùng thử",
-      "Tối đa 5 tài khoản mạng xã hội",
-      "Báo cáo nâng cao & xuất PDF",
-      "Lên lịch không giới hạn bài đăng",
-      "So sánh với đối thủ cạnh tranh",
-      "Hỗ trợ ưu tiên qua email",
-    ],
-  },
-  {
-    id: "team",
-    name: "Team",
-    price: "799,000",
-    priceLabel: "799.000đ",
-    priceSub: "/ tháng",
-    icon: Users,
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-600",
-    badge: "Cho doanh nghiệp",
-    badgeBg: "bg-violet-100 text-violet-700",
-    border: "border-border",
-    highlight: false,
-    cta: "Chọn gói Team",
-    ctaDisabled: false,
-    features: [
-      "Tất cả tính năng gói Pro",
-      "Không giới hạn tài khoản MXH",
-      "Workspace nhóm nhiều thành viên",
-      "Phân công & duyệt nội dung nhóm",
-      "API tích hợp riêng",
-      "Hỗ trợ 24/7 qua điện thoại & chat",
-    ],
+    cta: "Chọn gói Nâng cao",
+    features: ["Tính năng 1", "Tính năng 2", "Tính năng 3", "Tính năng 4"],
   },
 ]
 
@@ -118,7 +61,8 @@ type Step = "plans" | "checkout" | "success"
 export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
   const { upgradePlan } = useAuth()
   const [step, setStep] = useState<Step>("plans")
-  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null)
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly")
+  const [selectedPlan, setSelectedPlan] = useState<typeof planDefs[0] | null>(null)
   const [paying, setPaying] = useState(false)
   const [payMethod, setPayMethod] = useState<"card" | "momo" | "bank">("card")
 
@@ -141,11 +85,13 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
     }
   }
 
-  const handleSelectPlan = (plan: typeof plans[0]) => {
-    if (plan.ctaDisabled) return
+  const handleSelectPlan = (plan: typeof planDefs[0]) => {
     setSelectedPlan(plan)
     setStep("checkout")
   }
+
+  const getPrice = (plan: typeof planDefs[0]) =>
+    billingCycle === "monthly" ? plan.monthly : plan.annual
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -153,7 +99,7 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
     setPaying(true)
     await new Promise((r) => setTimeout(r, 1800))
     setPaying(false)
-    upgradePlan(selectedPlan.id as "pro" | "team")
+    upgradePlan(selectedPlan.id === "advanced" ? "team" : "pro")
     setStep("success")
     setTimeout(() => {
       handleClose(false)
@@ -165,118 +111,104 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl p-0 max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[680px] w-full p-0 max-h-[90vh] overflow-hidden flex flex-col">
 
         {/* ── STEP: PLANS ── */}
         {step === "plans" && (
-          <>
-            {/* Header */}
-            <div className="shrink-0 bg-gradient-to-br from-primary/5 to-violet-500/5 px-8 pt-7 pb-5 border-b border-border">
-              <DialogHeader>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <Badge className="bg-primary/10 text-primary hover:bg-primary/10 text-xs font-semibold">
-                    {"30 ngày dùng thử — còn 18 ngày"}
-                  </Badge>
-                </div>
-                <DialogTitle className="text-xl font-bold text-foreground">
-                  {"Chọn gói phù hợp với bạn"}
-                </DialogTitle>
-                <DialogDescription className="text-sm text-muted-foreground mt-0.5">
-                  {"Không cần thẻ tín dụng. Hủy bất kỳ lúc nào."}
-                </DialogDescription>
-              </DialogHeader>
+          <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+            {/* Top: title */}
+            <div className="px-7 pt-7 pb-4">
+              <DialogTitle className="text-xl font-bold text-foreground">Gói sử dụng</DialogTitle>
+              <DialogDescription className="sr-only">Chọn gói phù hợp với bạn</DialogDescription>
             </div>
 
-            {/* Scrollable plans grid */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-6">
-              <div className="grid grid-cols-3 gap-4">
-                {plans.map((plan) => {
-                  const Icon = plan.icon
-                  return (
-                    <div
-                      key={plan.id}
+            <div className="flex flex-1 gap-0 px-7 pb-7">
+              {/* Left: billing toggle + CTA */}
+              <div className="flex flex-col gap-4 w-52 shrink-0 pr-6">
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => setBillingCycle("monthly")}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition-all text-left",
+                      billingCycle === "monthly"
+                        ? "border-border bg-background text-foreground shadow-sm"
+                        : "border-border bg-transparent text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Gói 1 tháng
+                    {billingCycle === "monthly" && <ArrowRight className="h-4 w-4 text-primary" />}
+                  </button>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => setBillingCycle("annual")}
                       className={cn(
-                        "flex flex-col rounded-2xl border-2 overflow-hidden transition-all",
-                        plan.highlight
-                          ? "border-primary shadow-md shadow-primary/10"
-                          : plan.border
+                        "flex items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition-all text-left",
+                        billingCycle === "annual"
+                          ? "border-border bg-background text-foreground shadow-sm"
+                          : "border-border bg-transparent text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      {/* Top ribbon */}
-                      {plan.highlight ? (
-                        <div className="bg-primary py-1.5 text-center text-xs font-semibold text-primary-foreground tracking-wide">
-                          {"⭐ Phổ biến nhất"}
-                        </div>
-                      ) : (
-                        <div className="py-1.5" />
-                      )}
+                      Gói 1 năm
+                      {billingCycle === "annual" && <ArrowRight className="h-4 w-4 text-primary" />}
+                    </button>
+                    {billingCycle === "annual" && (
+                      <p className="text-xs font-medium text-primary px-1">Tiết kiệm 2 tháng sử dụng!</p>
+                    )}
+                  </div>
+                </div>
 
-                      <div className="flex flex-col flex-1 p-5">
-                        {/* Icon + name */}
-                        <div className="flex items-center gap-3">
-                          <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", plan.iconBg)}>
-                            <Icon className={cn("h-4 w-4", plan.iconColor)} />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-base font-bold text-foreground leading-tight">{plan.name}</p>
-                            <span className={cn("inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold leading-tight mt-0.5", plan.badgeBg)}>
-                              {plan.badge}
-                            </span>
-                          </div>
-                        </div>
+                <div className="mt-auto flex flex-col gap-2">
+                  <Button className="w-full font-semibold" onClick={() => handleClose(false)}>
+                    Trải nghiệm trước 30 ngày
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground leading-snug">
+                    Không thẻ tín dụng, không yêu cầu tài khoản ngân hàng trước.
+                  </p>
+                </div>
+              </div>
 
-                        {/* Price */}
-                        <div className="mt-4 flex items-end gap-1.5 leading-none">
-                          <span className="text-xl font-bold text-foreground">{plan.priceLabel}</span>
-                          <span className="text-xs text-muted-foreground pb-0.5">{plan.priceSub}</span>
-                        </div>
-
-                        {/* Features */}
-                        <ul className="mt-4 flex flex-col gap-2">
-                          {plan.features.map((f) => (
-                            <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground leading-snug">
-                              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-
-                        {/* CTA */}
-                        <Button
-                          className={cn(
-                            "mt-5 w-full rounded-xl font-semibold",
-                            plan.ctaDisabled && "opacity-60 cursor-default"
-                          )}
-                          variant={plan.highlight ? "default" : "outline"}
-                          disabled={plan.ctaDisabled}
-                          onClick={() => handleSelectPlan(plan)}
-                        >
-                          {plan.ctaDisabled ? plan.cta : (
-                            <>
-                              {plan.cta}
-                              <ArrowRight className="ml-1.5 h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                      </div>
+              {/* Right: plan cards side by side */}
+              <div className="flex flex-1 gap-4">
+                {planDefs.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={cn(
+                      "flex-1 rounded-2xl border-2 bg-background flex flex-col",
+                      plan.highlight ? "border-primary shadow-md shadow-primary/10" : "border-border"
+                    )}
+                  >
+                    <div className="p-5 pb-3">
+                      <p className="text-xl font-bold text-foreground">{plan.name}</p>
                     </div>
-                  )
-                })}
+                    <div className="mx-4 mb-4 rounded-xl bg-primary px-4 py-4 text-center">
+                      <p className="text-3xl font-bold text-primary-foreground leading-none">
+                        {getPrice(plan)}
+                      </p>
+                      <p className="text-sm font-medium text-primary-foreground/90 mt-1">tháng</p>
+                    </div>
+                    <ul className="px-5 flex flex-col gap-2.5 flex-1 pb-4">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="text-foreground shrink-0">•</span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="p-4 pt-0">
+                      <Button
+                        className="w-full rounded-xl font-semibold"
+                        variant={plan.highlight ? "default" : "outline"}
+                        onClick={() => handleSelectPlan(plan)}
+                      >
+                        {plan.cta}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="shrink-0 border-t border-border px-6 py-4 text-center">
-              <p className="text-xs text-muted-foreground">
-                {"Cần tư vấn thêm? Liên hệ "}
-                <span className="font-medium text-primary">hello@socialsense.vn</span>
-                {" hoặc hotline "}
-                <span className="font-medium text-primary">1800 1234</span>
-                {" (miễn phí)."}
-              </p>
-            </div>
-          </>
+          </div>
         )}
 
         {/* ── STEP: CHECKOUT ── */}
@@ -305,16 +237,16 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
               <div className="rounded-xl border border-border bg-muted/40 p-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Gói {selectedPlan.name}</span>
-                  <span className="font-semibold text-foreground">{selectedPlan.priceLabel}</span>
+                  <span className="font-semibold text-foreground">{getPrice(selectedPlan)}</span>
                 </div>
                 <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                   <span>Chu kỳ thanh toán</span>
-                  <span>Hàng tháng</span>
+                  <span>{billingCycle === "monthly" ? "Hàng tháng" : "Hàng năm"}</span>
                 </div>
                 <Separator className="my-3" />
                 <div className="flex items-center justify-between font-semibold">
                   <span className="text-sm">Tổng hôm nay</span>
-                  <span className="text-base text-primary">{selectedPlan.priceLabel}</span>
+                  <span className="text-base text-primary">{getPrice(selectedPlan)}</span>
                 </div>
               </div>
 
@@ -408,8 +340,8 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
                     <div className="text-center">
                       <p className="text-sm font-bold text-foreground">Quét mã QR MoMo</p>
                       <p className="mt-1 text-xs text-muted-foreground">Mở app MoMo → Quét mã → Xác nhận thanh toán</p>
-                      <p className="mt-2.5 text-lg font-bold text-pink-600">{selectedPlan.priceLabel}</p>
-                      <p className="text-[10px] text-muted-foreground">Gói {selectedPlan.name} — hàng tháng</p>
+                      <p className="mt-2.5 text-lg font-bold text-pink-600">{getPrice(selectedPlan)}</p>
+                      <p className="text-[10px] text-muted-foreground">Gói {selectedPlan.name} — {billingCycle === "monthly" ? "hàng tháng" : "hàng năm"}</p>
                     </div>
                     <div className="flex w-full items-center gap-2 rounded-lg bg-pink-100 px-3 py-2">
                       <span className="flex-1 text-center font-mono text-xs font-semibold text-pink-700">SOCIALSENSE.{selectedPlan.id.toUpperCase()}</span>
@@ -430,8 +362,8 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
                       { label: "Ngân hàng", value: "Vietcombank" },
                       { label: "Số tài khoản", value: "1234 5678 9012" },
                       { label: "Chủ tài khoản", value: "CÔNG TY SOCIALSENSE" },
-                      { label: "Số tiền", value: selectedPlan.priceLabel },
-                      { label: "Nội dung CK", value: `SS ${selectedPlan.id.toUpperCase()} ${selectedPlan.priceLabel}` },
+                      { label: "Số tiền", value: getPrice(selectedPlan) },
+                      { label: "Nội dung CK", value: `SS ${selectedPlan.id.toUpperCase()} ${getPrice(selectedPlan)}` },
                     ].map(({ label, value }) => (
                       <div key={label} className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">{label}</span>
@@ -465,10 +397,10 @@ export function PlansDialog({ open, onOpenChange }: PlansDialogProps) {
                 {paying
                   ? "Đang xử lý..."
                   : payMethod === "card"
-                  ? `Thanh toán ${selectedPlan.priceLabel}`
+                  ? `Thanh toán ${getPrice(selectedPlan)}`
                   : payMethod === "momo"
-                  ? `Xác nhận đã quét QR • ${selectedPlan.priceLabel}`
-                  : `Xác nhận đã chuyển khoản • ${selectedPlan.priceLabel}`
+                  ? `Xác nhận đã quét QR • ${getPrice(selectedPlan)}`
+                  : `Xác nhận đã chuyển khoản • ${getPrice(selectedPlan)}`
                 }
               </Button>
               <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">

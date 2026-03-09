@@ -1,91 +1,116 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
-import { CheckCircle2, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+type BillingCycle = "monthly" | "annual"
+
+const planDefs = [
+  {
+    id: "beginner",
+    name: "Người mới",
+    monthly: "79,000đ",
+    annual: "67,000đ",
+    features: ["Tính năng 1", "Tính năng 2", "Tính năng 3"],
+  },
+  {
+    id: "advanced",
+    name: "Nâng cao",
+    monthly: "99,000đ",
+    annual: "84,000đ",
+    features: ["Tính năng 1", "Tính năng 2", "Tính năng 3", "Tính năng 4"],
+  },
+]
 
 export function PricingSection() {
+  const [billing, setBilling] = useState<BillingCycle>("monthly")
+
   return (
     <section className="bg-card py-20">
       <div className="mx-auto max-w-4xl px-6">
-        <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">
-          {"Dùng thử toàn bộ tính năng — miễn phí 30 ngày."}
-        </h2>
-        <p className="mx-auto mt-3 max-w-md text-center text-base text-muted-foreground">
-          {"Không cần thẻ tín dụng. Không giới hạn tính năng. Không điều kiện."}
-        </p>
+        <div className="flex flex-col md:flex-row gap-8 items-start">
 
-        {/* Trial card */}
-        <div className="mx-auto mt-12 max-w-md rounded-2xl border-2 border-primary bg-card p-8 shadow-lg shadow-primary/5">
-          <div className="text-center">
-            <p className="text-lg font-bold text-foreground">
-              {"Dùng thử miễn phí · 30 ngày"}
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {"Truy cập toàn bộ tính năng ngay lập tức."}
-            </p>
+          {/* Left: title + billing toggles + CTA */}
+          <div className="flex flex-col gap-5 md:w-52 shrink-0">
+            <h2 className="text-2xl font-bold text-foreground">Gói sử dụng</h2>
+
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setBilling("monthly")}
+                className={cn(
+                  "flex items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition-all text-left",
+                  billing === "monthly"
+                    ? "border-border bg-background text-foreground shadow-sm"
+                    : "border-border bg-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Gói 1 tháng
+                {billing === "monthly" && <ArrowRight className="h-4 w-4 text-primary" />}
+              </button>
+              <div className="flex flex-col gap-1">
+                <button
+                  onClick={() => setBilling("annual")}
+                  className={cn(
+                    "flex items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition-all text-left",
+                    billing === "annual"
+                      ? "border-border bg-background text-foreground shadow-sm"
+                      : "border-border bg-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Gói 1 năm
+                  {billing === "annual" && <ArrowRight className="h-4 w-4 text-primary" />}
+                </button>
+                {billing === "annual" && (
+                  <p className="text-xs font-medium text-primary px-1">Tiết kiệm 2 tháng sử dụng!</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Button className="w-full font-semibold" asChild>
+                <Link href="/dashboard">
+                  Trải nghiệm trước 30 ngày
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <p className="text-[11px] text-muted-foreground leading-snug">
+                Không thẻ tín dụng, không yêu cầu tài khoản ngân hàng trước.
+              </p>
+            </div>
           </div>
-          <div className="mt-6 flex flex-col gap-3">
-            {[
-              "Kết nối không giới hạn tài khoản mạng xã hội",
-              "Phân tích hiệu suất bài đăng chi tiết",
-              "Gợi ý thời điểm đăng tối ưu (AI)",
-              "Báo cáo tự động hàng tuần",
-              "So sánh với người dùng khác",
-              "Trợ lý nội dung AI (caption + hashtag)",
-              "Hỗ trợ tiếng Việt 24/7",
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
-                <span className="text-base text-foreground">{item}</span>
+
+          {/* Right: plan cards */}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {planDefs.map((plan) => (
+              <div
+                key={plan.id}
+                className="rounded-2xl border border-border bg-background shadow-sm overflow-hidden flex flex-col"
+              >
+                <div className="p-6 pb-3">
+                  <p className="text-lg font-bold text-foreground">{plan.name}</p>
+                </div>
+                <div className="mx-4 mb-4 rounded-xl bg-primary px-4 py-3 text-center">
+                  <p className="text-2xl font-bold text-primary-foreground leading-tight">
+                    {billing === "monthly" ? plan.monthly : plan.annual}/
+                  </p>
+                  <p className="text-sm font-medium text-primary-foreground/90">tháng</p>
+                </div>
+                <ul className="px-6 pb-6 flex flex-col gap-2 flex-1">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="text-foreground">•</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
-          <Button size="lg" className="mt-8 w-full rounded-lg font-semibold" asChild>
-            <Link href="/dashboard">
-              {"Bắt đầu dùng thử miễn phí 30 ngày"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+
         </div>
-
-        {/* Paid plans */}
-        <p className="mt-10 text-center text-sm font-medium text-muted-foreground">
-          {"Sau 30 ngày, chọn gói phù hợp:"}
-        </p>
-        <div className="mx-auto mt-5 grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
-          {/* Pro */}
-          <div className="rounded-xl border border-border bg-background p-6">
-            <p className="text-base font-bold text-foreground">PRO</p>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">299,000</span>
-              <span className="text-sm text-muted-foreground">{"đ/tháng"}</span>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {"Cá nhân & freelancer · Tối đa 5 tài khoản"}
-            </p>
-            <Button variant="outline" className="mt-5 w-full rounded-lg font-semibold" size="sm">
-              {"Chọn gói Pro"}
-            </Button>
-          </div>
-
-          {/* Team */}
-          <div className="rounded-xl border border-border bg-background p-6">
-            <p className="text-base font-bold text-foreground">TEAM</p>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">799,000</span>
-              <span className="text-sm text-muted-foreground">{"đ/tháng"}</span>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {"Doanh nghiệp · Không giới hạn · Workspace nhóm"}
-            </p>
-            <Button variant="outline" className="mt-5 w-full rounded-lg font-semibold" size="sm">
-              {"Chọn gói Team"}
-            </Button>
-          </div>
-        </div>
-
-        <p className="mx-auto mt-8 max-w-xl text-center text-xs text-muted-foreground">
-          {"Không cần thẻ tín dụng để bắt đầu · Sau 30 ngày chọn gói phù hợp · Hủy bất cứ lúc nào · Hỗ trợ tiếng Việt"}
-        </p>
       </div>
     </section>
   )

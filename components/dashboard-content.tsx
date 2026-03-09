@@ -12,6 +12,9 @@ import {
   ArrowRight,
   Sparkles,
   Clock,
+  Users,
+  ThumbsUp,
+  FileText,
 } from "lucide-react"
 import { PlansDialog } from "@/components/plans-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -97,6 +100,33 @@ const upcomingPosts = [
     time: "T6, 17:00",
     status: "scheduled",
     color: "#1877F2",
+  },
+]
+
+const socialAccounts = [
+  {
+    platform: "Facebook",
+    color: "#1877F2",
+    username: "@minhtubusiness",
+    followers: "12,400",
+    likes: "8,900",
+    posts: 142,
+  },
+  {
+    platform: "Instagram",
+    color: "#E4405F",
+    username: "@minhtucreates",
+    followers: "8,720",
+    likes: "52,300",
+    posts: 98,
+  },
+  {
+    platform: "TikTok",
+    color: "#111827",
+    username: "@minhtu.official",
+    followers: "24,100",
+    likes: "183,500",
+    posts: 67,
   },
 ]
 
@@ -216,6 +246,58 @@ export function DashboardContent() {
           </Card>
         ))}
       </div>
+
+      {/* Social Accounts Bar */}
+      <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <CardHeader className="pb-2 pt-4 px-5">
+          <CardTitle className="text-sm font-semibold text-foreground">Tài khoản đã kết nối</CardTitle>
+        </CardHeader>
+        <CardContent className="px-5 pb-4">
+          <div className="flex flex-col gap-2">
+            {socialAccounts.map((acc) => (
+              <div
+                key={acc.platform}
+                className="flex items-center gap-4 rounded-xl border border-border px-4 py-3"
+              >
+                {/* Platform badge */}
+                <div
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white text-xs font-bold"
+                  style={{ backgroundColor: acc.color }}
+                >
+                  {acc.platform[0]}
+                </div>
+
+                {/* Platform name */}
+                <span className="w-24 shrink-0 text-sm font-semibold text-foreground">{acc.platform}</span>
+
+                {/* Username */}
+                <span className="flex-1 text-sm text-muted-foreground">{acc.username}</span>
+
+                {/* Followers */}
+                <div className="flex items-center gap-1.5 min-w-[90px]">
+                  <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">{acc.followers}</span>
+                  <span className="text-xs text-muted-foreground">followers</span>
+                </div>
+
+                {/* Likes */}
+                <div className="flex items-center gap-1.5 min-w-[90px]">
+                  <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">{acc.likes}</span>
+                  <span className="text-xs text-muted-foreground">likes</span>
+                </div>
+
+                {/* Posts */}
+                <div className="flex items-center gap-1.5 min-w-[70px]">
+                  <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">{acc.posts}</span>
+                  <span className="text-xs text-muted-foreground">bài</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Performance Chart + Upcoming Posts */}
       <div className="grid grid-cols-12 gap-4">
