@@ -30,7 +30,7 @@ export function ProblemSection() {
               <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
                 <pain.icon className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-sm font-medium leading-relaxed text-foreground">{pain.text}</p>
+              <p className="text-base font-medium leading-relaxed text-foreground">{pain.text}</p>
             </div>
           ))}
         </div>

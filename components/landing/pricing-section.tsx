@@ -6,10 +6,10 @@ export function PricingSection() {
   return (
     <section className="bg-card py-20">
       <div className="mx-auto max-w-4xl px-6">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">
           {"Dùng thử toàn bộ tính năng — miễn phí 30 ngày."}
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-center text-sm text-muted-foreground">
+        <p className="mx-auto mt-3 max-w-md text-center text-base text-muted-foreground">
           {"Không cần thẻ tín dụng. Không giới hạn tính năng. Không điều kiện."}
         </p>
 
@@ -35,7 +35,7 @@ export function PricingSection() {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
-                <span className="text-sm text-foreground">{item}</span>
+                <span className="text-base text-foreground">{item}</span>
               </div>
             ))}
           </div>
@@ -59,7 +59,7 @@ export function PricingSection() {
               <span className="text-2xl font-bold text-foreground">299,000</span>
               <span className="text-sm text-muted-foreground">{"đ/tháng"}</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground">
               {"Cá nhân & freelancer · Tối đa 5 tài khoản"}
             </p>
             <Button variant="outline" className="mt-5 w-full rounded-lg font-semibold" size="sm">
@@ -74,7 +74,7 @@ export function PricingSection() {
               <span className="text-2xl font-bold text-foreground">799,000</span>
               <span className="text-sm text-muted-foreground">{"đ/tháng"}</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground">
               {"Doanh nghiệp · Không giới hạn · Workspace nhóm"}
             </p>
             <Button variant="outline" className="mt-5 w-full rounded-lg font-semibold" size="sm">

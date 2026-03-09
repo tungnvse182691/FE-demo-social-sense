@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  font-size: 20px;
+}
+
 :root {
   --background: #FFFFFF;
   --foreground: #0F172A;
@@ -85,8 +89,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground text-base;
-    font-size: 22px;
+    @apply bg-background text-foreground;
   }
   h1 {
     @apply text-5xl;
@@ -98,9 +101,9 @@
     @apply text-3xl;
   }
   p {
-    @apply text-xl;
+    @apply text-base;
   }
   a {
-    @apply text-xl;
+    @apply text-base;
   }
 }

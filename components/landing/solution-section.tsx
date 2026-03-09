@@ -14,10 +14,10 @@ export function SolutionSection() {
             <p className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground">
               {"Chúng tôi không chỉ đưa ra số liệu — chúng tôi giải thích chúng, và gợi ý bước tiếp theo cụ thể cho bạn."}
             </p>
-            <Badge className="mt-6 bg-primary/10 text-primary hover:bg-primary/10 text-xs font-semibold">
+            <Badge className="mt-6 bg-primary/10 text-primary hover:bg-primary/10 text-sm font-semibold">
               {"Dành riêng cho thị trường Việt Nam"}
             </Badge>
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-3 text-sm text-muted-foreground">
               {"Dùng thử toàn bộ tính năng — miễn phí 30 ngày, không điều kiện."}
             </p>
           </div>
@@ -50,8 +50,8 @@ export function SolutionSection() {
                     {s.step}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-foreground">{s.title}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
+                    <p className="text-base font-bold text-foreground">{s.title}</p>
+                    <p className="mt-1 text-base text-muted-foreground">{s.desc}</p>
                   </div>
                 </div>
               ))}

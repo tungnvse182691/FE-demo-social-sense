@@ -9,13 +9,13 @@ export function FinalCtaSection() {
         <h2 className="text-3xl font-bold tracking-tight text-white lg:text-4xl">
           {"30 ngày — toàn bộ tính năng — hoàn toàn miễn phí."}
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/60">
+        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-white/60">
           {"Không cần thẻ tín dụng. Bắt đầu bằng quiz 2 phút để nhận chiến lược phù hợp với bạn ngay hôm nay."}
         </p>
 
         <Button
           size="lg"
-          className="mt-8 rounded-lg bg-white px-8 text-sm font-bold text-[#0F172A] hover:bg-white/90"
+          className="mt-8 rounded-lg bg-white px-8 text-base font-bold text-[#0F172A] hover:bg-white/90"
           asChild
         >
           <Link href="/dashboard">
@@ -24,7 +24,7 @@ export function FinalCtaSection() {
         </Button>
 
         {/* Feature pills */}
-        <p className="mt-8 text-xs text-white/40">
+        <p className="mt-8 text-sm text-white/40">
           {"Tất cả tính năng bên dưới có trong 30 ngày dùng thử:"}
         </p>
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
@@ -38,7 +38,7 @@ export function FinalCtaSection() {
           ].map((pill) => (
             <span
               key={pill}
-              className="flex items-center gap-1.5 rounded-full bg-blue-500/20 px-3 py-1.5 text-xs font-medium text-blue-300"
+              className="flex items-center gap-1.5 rounded-full bg-blue-500/20 px-3 py-1.5 text-sm font-medium text-blue-300"
             >
               <CheckCircle2 className="h-3 w-3" />
               {pill}

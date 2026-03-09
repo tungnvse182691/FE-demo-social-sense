@@ -22,21 +22,21 @@ export function HeroSection() {
             <h1 className="text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-foreground lg:text-5xl">
               {"Hiểu rõ mạng xã hội của bạn. Đăng đúng lúc. Tăng trưởng thật sự."}
             </h1>
-            <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:text-lg">
+            <p className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground lg:text-xl">
               {"SocialSense phân tích dữ liệu, gợi ý nội dung, và giúp bạn ra quyết định đăng bài thông minh hơn."}
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <Button size="lg" className="rounded-lg px-6 text-sm font-semibold" asChild>
+              <Button size="lg" className="rounded-lg px-6 text-base font-semibold" asChild>
                 <Link href="/dashboard">
                   {"Bắt đầu dùng thử miễn phí 30 ngày"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="rounded-lg px-6 text-sm font-semibold">
+              <Button variant="outline" size="lg" className="rounded-lg px-6 text-base font-semibold">
                 {"Xem demo"}
               </Button>
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
+            <p className="mt-4 text-sm text-muted-foreground">
               {"Không cần thẻ tín dụng · Toàn bộ tính năng từ ngày đầu · Hủy bất cứ lúc nào"}
             </p>
           </div>

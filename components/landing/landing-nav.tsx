@@ -5,9 +5,17 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
+import { AuthDialog } from "@/components/auth-dialog"
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authTab, setAuthTab] = useState<"login" | "register">("login")
+
+  const openAuth = (tab: "login" | "register") => {
+    setAuthTab(tab)
+    setAuthOpen(true)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -28,8 +36,8 @@ export function LandingNav() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Logo width={35} height={35} />
-          <span className="text-sm font-bold text-foreground">SocialSense</span>
-          <span className="text-[10px] font-medium text-muted-foreground">.vn</span>
+          <span className="text-base font-bold text-foreground">SocialSense</span>
+          <span className="text-xs font-medium text-muted-foreground">.vn</span>
         </Link>
 
         {/* Center links */}
@@ -42,7 +50,7 @@ export function LandingNav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
             </a>
@@ -50,11 +58,24 @@ export function LandingNav() {
         </nav>
 
         {/* CTA */}
-        <Button size="sm" className="rounded-lg text-xs font-semibold" asChild>
-          <Link href="/dashboard">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="rounded-lg text-sm font-medium"
+            onClick={() => openAuth("login")}
+          >
+            {"Đăng nhập"}
+          </Button>
+          <Button
+            size="sm"
+            className="rounded-lg text-sm font-semibold"
+            onClick={() => openAuth("register")}
+          >
             {"Dùng thử miễn phí 30 ngày"}
-          </Link>
-        </Button>
+          </Button>
+        </div>
+        <AuthDialog open={authOpen} onOpenChange={setAuthOpen} defaultTab={authTab} />
       </div>
     </header>
   )

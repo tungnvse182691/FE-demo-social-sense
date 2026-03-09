@@ -16,6 +16,7 @@ import {
   X,
   Video,
 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -224,8 +225,39 @@ export function SchedulerContent() {
     setSelectedPost(null)
   }
 
+  function handleSuggestCaption() {
+    const suggestions: Record<Platform, string[]> = {
+      facebook: [
+        "✨ Hôm nay chúng tôi muốn chia sẻ với bạn một điều đặc biệt! Đừng bỏ lỡ cơ hội này nhé 🚀 #SocialMedia #Marketing",
+        "💡 5 mẹo đơn giản giúp tăng tương tác bài đăng hiệu quả. Bạn đã thử chưa? Để lại bình luận bên dưới nhé!",
+        "🎉 Tuần mới — cơ hội mới! Hôm nay bạn sẽ tạo ra điều gì tuyệt vời? Hãy cùng chúng tôi chinh phục mục tiêu! 💪",
+      ],
+      instagram: [
+        "Living my best life ✨ | Swipe để xem toàn bộ bộ sưu tập mới nhất của chúng tôi! 🌟\n\n#ootd #fashion #lifestyle #minimal",
+        "Behind the lens 📸 | Mỗi khoảnh khắc đều xứng đáng được ghi lại. Đây là câu chuyện hôm nay của chúng tôi.\n\n#photography #content #creative",
+        "New drop 🔥 | BST mùa hè chính thức ra mắt! Link in bio để xem chi tiết và đặt hàng sớm nhé!\n\n#newcollection #summer #fashion",
+      ],
+      tiktok: [
+        "POV: Bạn vừa tìm ra bí kíp tăng tương tác mà không ai chỉ cho bạn 👀 #LearnOnTikTok #MarketingTips #viral",
+        "Thử ngay trend này và xem điều gì xảy ra 🤩 Duet với tôi nhé! #challenge #fyp #trending",
+        "1 ngày làm content creator trông như thế nào? Cùng xem behind the scenes của tôi! 🎬 #behindthescenes #contentcreator #vlog",
+      ],
+    }
+    const list = suggestions[newPlatform]
+    const pick = list[Math.floor(Math.random() * list.length)]
+    setNewCaption(pick)
+    toast.success("Đã gợi ý caption!", { description: "Bạn có thể chỉnh sửa theo ý muốn." })
+  }
+
   function handleNewPost() {
-    if (!newCaption.trim() || !newDate) return
+    if (!newCaption.trim()) {
+      toast.error("Vui lòng viết nội dung bài đăng")
+      return
+    }
+    if (!newDate) {
+      toast.error("Vui lòng chọn ngày đăng")
+      return
+    }
     const [y2, m2, d2] = newDate.split("-").map(Number)
     const [h, min] = newTime.split(":").map(Number)
     const date = new Date(y2, m2 - 1, d2, h, min)
@@ -242,6 +274,7 @@ export function SchedulerContent() {
     setNewTime("18:00")
     setNewPlatform("facebook")
     setNewPostOpen(false)
+    toast.success("Đã lên lịch bài đăng!", { description: `${PLATFORM_CONFIG[newPlatform].label} — ${formatFullDate(date)}` })
   }
 
   // --- Week helpers ---
@@ -354,32 +387,33 @@ export function SchedulerContent() {
         </SheetContent>
       </Sheet>
 
-      {/* New Post Dialog */}
-      <Dialog open={newPostOpen} onOpenChange={setNewPostOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{"Lên lịch bài mới"}</DialogTitle>
-            <DialogDescription>{"Chọn nền tảng, viết nội dung và lên lịch đăng bài."}</DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-5 pt-2">
+      {/* New Post Sheet */}
+      <Sheet open={newPostOpen} onOpenChange={setNewPostOpen}>
+        <SheetContent className="w-full sm:max-w-md flex flex-col p-0">
+          <SheetHeader className="shrink-0 px-6 py-5 border-b border-border">
+            <SheetTitle className="text-base font-bold">{"Lên lịch bài mới"}</SheetTitle>
+            <SheetDescription className="text-xs">{"Chọn nền tảng, viết nội dung và lên lịch đăng bài."}</SheetDescription>
+          </SheetHeader>
+
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 flex flex-col gap-5">
             {/* Platform selector */}
             <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium">{"Nền tảng"}</Label>
+              <Label className="text-xs font-semibold text-foreground">{"Nền tảng"}</Label>
               <div className="flex gap-2">
                 {(["facebook", "instagram", "tiktok"] as Platform[]).map((p) => {
                   const cfg = PLATFORM_CONFIG[p]
-                  const selected = newPlatform === p
+                  const sel = newPlatform === p
                   return (
                     <button
                       key={p}
                       onClick={() => setNewPlatform(p)}
-                      className={`flex items-center gap-2 rounded-lg border-2 px-4 py-2.5 text-sm font-medium transition-all ${
-                        selected
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-xl border-2 px-3 py-2.5 text-xs font-medium transition-all ${
+                        sel
                           ? `${cfg.borderColor} ${cfg.chipBg} ${cfg.chipText}`
                           : "border-border bg-card text-muted-foreground hover:border-muted-foreground/30"
                       }`}
                     >
-                      <PlatformIcon platform={p} className="h-4 w-4" />
+                      <PlatformIcon platform={p} className="h-3.5 w-3.5" />
                       {cfg.label}
                     </button>
                   )
@@ -387,13 +421,14 @@ export function SchedulerContent() {
               </div>
             </div>
 
-            {/* Upload area */}
+            {/* Media upload */}
             <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium">{"Media"}</Label>
-              <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-border bg-secondary/30 py-8 transition-colors hover:border-muted-foreground/40">
+              <Label className="text-xs font-semibold text-foreground">{"Hình ảnh / Video"}</Label>
+              <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-border bg-secondary/20 py-7 cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition-colors">
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <Upload className="h-6 w-6" />
-                  <span className="text-xs">{"Kéo thả hình ảnh / video hoặc click để chọn"}</span>
+                  <Upload className="h-5 w-5" />
+                  <span className="text-xs">{"Kéo thả hoặc click để chọn"}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{"PNG, JPG, MP4 — tối đa 50MB"}</span>
                 </div>
               </div>
             </div>
@@ -401,47 +436,73 @@ export function SchedulerContent() {
             {/* Caption */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium">{"Caption"}</Label>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-primary hover:text-primary">
-                  <Sparkles className="mr-1 h-3.5 w-3.5" />
-                  {"Gợi ý caption"}
-                </Button>
+                <Label className="text-xs font-semibold text-foreground">{"Caption"}</Label>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-muted-foreground">{newCaption.length}/2200</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 gap-1 px-2 text-[11px] text-primary hover:text-primary"
+                    onClick={handleSuggestCaption}
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    {"Gợi ý"}
+                  </Button>
+                </div>
               </div>
               <Textarea
                 value={newCaption}
                 onChange={(e) => setNewCaption(e.target.value)}
                 placeholder="Viết nội dung bài đăng tại đây..."
-                className="min-h-[100px] resize-none"
+                className="min-h-[120px] resize-none text-sm"
+                maxLength={2200}
               />
             </div>
 
             {/* Date & Time */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium">{"Ngày"}</Label>
+                <Label className="text-xs font-semibold text-foreground">{"Ngày đăng"}</Label>
                 <Input
                   type="date"
                   value={newDate}
                   onChange={(e) => setNewDate(e.target.value)}
+                  className="text-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium">{"Giờ"}</Label>
+                <Label className="text-xs font-semibold text-foreground">{"Giờ đăng"}</Label>
                 <Input
                   type="time"
                   value={newTime}
                   onChange={(e) => setNewTime(e.target.value)}
+                  className="text-sm"
                 />
               </div>
             </div>
 
-            {/* Confirm */}
-            <Button className="w-full font-semibold" onClick={handleNewPost} disabled={!newCaption.trim() || !newDate}>
+            {/* Best time hint */}
+            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
+              <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+              <p className="text-xs text-amber-800">
+                <span className="font-semibold">Khung giờ tốt nhất:</span>{" Thứ 4, 18:00–20:00 "}
+                — tỷ lệ tương tác cao hơn <span className="font-semibold">2.4×</span> trung bình.
+              </p>
+            </div>
+          </div>
+
+          {/* Sticky footer */}
+          <div className="shrink-0 border-t border-border px-6 py-4">
+            <Button
+              className="w-full rounded-xl font-semibold"
+              onClick={handleNewPost}
+            >
+              <Plus className="mr-1.5 h-4 w-4" />
               {"Lên lịch"}
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </main>
   )
 }

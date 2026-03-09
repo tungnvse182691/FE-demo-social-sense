@@ -15,6 +15,8 @@ import {
   ArrowRight,
   Check,
   Loader2,
+  Zap,
+  Users,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -32,6 +34,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { cn } from "@/lib/utils"
+import { CheckoutDialog, type CheckoutPlan } from "@/components/checkout-dialog"
 
 export function SettingsContent() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -39,7 +43,8 @@ export function SettingsContent() {
   const [isSaving, setIsSaving] = useState(false)
   const [twoFA, setTwoFA] = useState(false)
   const [notifs, setNotifs] = useState({ email: true, push: true, schedule: true, updates: false })
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [checkoutPlan, setCheckoutPlan] = useState<CheckoutPlan | null>(null)
 
   const handleSaveProfile = async () => {
     setIsSaving(true)
@@ -62,9 +67,9 @@ export function SettingsContent() {
     toast.success("Ảnh đại diện đã được cập nhật!")
   }
 
-  const handleSelectPlan = (plan: string, price: string) => {
-    setSelectedPlan(plan)
-    toast.success(`Đang xử lý gói ${plan}...`, { description: `${price} VND/tháng — chuyển hướng đến thanh toán.` })
+  const handleSelectPlan = (id: string, name: string, priceLabel: string) => {
+    setCheckoutPlan({ id, name, priceLabel, priceSub: "/ tháng" })
+    setCheckoutOpen(true)
   }
 
   const handleChangePassword = () => {
@@ -85,7 +90,9 @@ export function SettingsContent() {
   }
 
   return (
-    <Tabs defaultValue="profile" className="flex flex-col gap-6">
+    <>
+      <CheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen} plan={checkoutPlan} />
+      <Tabs defaultValue="profile" className="flex flex-col gap-6">
       <TabsList className="h-9 w-fit bg-secondary">
         <TabsTrigger value="profile" className="text-xs">
           <User className="mr-1.5 h-3.5 w-3.5" /> {"Hồ sơ"}
@@ -323,97 +330,102 @@ export function SettingsContent() {
           </CardContent>
         </Card>
 
-        {/* Pricing Plans */}
+        {/* Pricing Plans — synced with plans-dialog */}
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">
-              {"Chọn gói phù hợp"}
-            </CardTitle>
+            <CardTitle className="text-sm font-semibold text-foreground">{"Chọn gói phù hợp"}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              {/* Standard Plan */}
-              <div className="rounded-xl border border-border p-5">
-                <p className="text-sm font-semibold text-foreground">Standard</p>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-foreground">299,000</span>
-                  <span className="text-sm text-muted-foreground">VND/{"tháng"}</span>
+              {/* Pro Plan */}
+              <div className="flex flex-col rounded-2xl border-2 border-primary overflow-hidden shadow-md shadow-primary/10">
+                <div className="bg-primary py-1.5 text-center text-xs font-semibold text-primary-foreground tracking-wide">
+                  {"⭐ Phổ biến nhất"}
                 </div>
-                <Separator className="my-4" />
-                <div className="flex flex-col gap-2.5 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"3 tài khoản kết nối"}
+                <div className="flex flex-col flex-1 p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                      <Zap className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-foreground leading-tight">Pro</p>
+                      <span className="inline-block rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground leading-tight mt-0.5">
+                        Phổ biến nhất
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"50 bài AI/tháng"}
+                  <div className="mt-4 flex items-end gap-1.5 leading-none">
+                    <span className="text-xl font-bold text-foreground">299.000đ</span>
+                    <span className="text-xs text-muted-foreground pb-0.5">/ tháng</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"Báo cáo cơ bản"}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"Hỗ trợ qua email"}
-                  </div>
+                  <ul className="mt-4 flex flex-col gap-2 flex-1">
+                    {[
+                      "Tất cả tính năng bản dùng thử",
+                      "Tối đa 5 tài khoản mạng xã hội",
+                      "Báo cáo nâng cao & xuất PDF",
+                      "Lên lịch không giới hạn bài đăng",
+                      "So sánh với đối thủ cạnh tranh",
+                      "Hỗ trợ ưu tiên qua email",
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground leading-snug">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    className="mt-5 w-full rounded-xl font-semibold"
+                    onClick={() => handleSelectPlan("pro", "Pro", "299.000đ")}
+                  >
+                    Chọn gói Pro
+                    <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant={selectedPlan === "Standard" ? "default" : "outline"}
-                  className="mt-5 w-full rounded-lg font-semibold"
-                  size="sm"
-                  onClick={() => handleSelectPlan("Standard", "299,000")}
-                >
-                  {selectedPlan === "Standard" ? <Check className="mr-1.5 h-4 w-4" /> : null}
-                  {selectedPlan === "Standard" ? "Đã chọn Standard" : "Chọn gói Standard"}
-                </Button>
               </div>
 
-              {/* Professional Plan — recommended */}
-              <div className="relative rounded-xl border-2 border-primary p-5">
-                <Badge className="absolute -top-2.5 right-4 bg-primary text-primary-foreground hover:bg-primary text-[10px]">
-                  {"Phổ biến nhất"}
-                </Badge>
-                <p className="text-sm font-semibold text-foreground">Professional</p>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-foreground">499,000</span>
-                  <span className="text-sm text-muted-foreground">VND/{"tháng"}</span>
-                </div>
-                <Separator className="my-4" />
-                <div className="flex flex-col gap-2.5 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"10 tài khoản kết nối"}
+              {/* Team Plan */}
+              <div className="flex flex-col rounded-2xl border-2 border-border overflow-hidden hover:border-violet-300 transition-all">
+                <div className="py-1.5" />
+                <div className="flex flex-col flex-1 p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50">
+                      <Users className="h-4 w-4 text-violet-600" />
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-foreground leading-tight">Team</p>
+                      <span className="inline-block rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 leading-tight mt-0.5">
+                        Cho doanh nghiệp
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"AI không giới hạn"}
+                  <div className="mt-4 flex items-end gap-1.5 leading-none">
+                    <span className="text-xl font-bold text-foreground">799.000đ</span>
+                    <span className="text-xs text-muted-foreground pb-0.5">/ tháng</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"Phân tích đối thủ"}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"Báo cáo chi tiết & xuất PDF"}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-500" />
-                    {"Hỗ trợ ưu tiên"}
-                  </div>
-                </div>
-                <Button
-                  className="mt-5 w-full rounded-lg font-semibold"
-                  size="sm"
-                  onClick={() => handleSelectPlan("Professional", "499,000")}
-                >
-                  {selectedPlan === "Professional" ? (
-                    <Check className="mr-1.5 h-4 w-4" />
-                  ) : (
+                  <ul className="mt-4 flex flex-col gap-2 flex-1">
+                    {[
+                      "Tất cả tính năng gói Pro",
+                      "Không giới hạn tài khoản MXH",
+                      "Workspace nhóm nhiều thành viên",
+                      "Phân công & duyệt nội dung nhóm",
+                      "API tích hợp riêng",
+                      "Hỗ trợ 24/7 qua điện thoại & chat",
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground leading-snug">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    variant="outline"
+                    className="mt-5 w-full rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600"
+                    onClick={() => handleSelectPlan("team", "Team", "799.000đ")}
+                  >
+                    Chọn gói Team
                     <ArrowRight className="ml-1.5 h-4 w-4" />
-                  )}
-                  {selectedPlan === "Professional" ? "Đã chọn Professional" : "Chọn gói Professional"}
-                </Button>
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -473,5 +485,6 @@ export function SettingsContent() {
         </Card>
       </TabsContent>
     </Tabs>
+    </>
   )
 }

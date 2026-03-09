@@ -6,7 +6,7 @@ export function HowItWorksSection() {
   return (
     <section className="bg-secondary/30 py-20">
       <div className="mx-auto max-w-5xl px-6">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">
           {"Chỉ 3 bước để bắt đầu"}
         </h2>
 
@@ -36,8 +36,8 @@ export function HowItWorksSection() {
                 {s.step}
               </div>
               <div className="mt-2 h-8 w-px bg-border md:hidden" />
-              <h3 className="mt-4 text-base font-bold text-foreground">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{s.title}</h3>
+              <p className="mt-2 text-base leading-relaxed text-muted-foreground">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -46,7 +46,7 @@ export function HowItWorksSection() {
         <div className="mx-auto mt-14 max-w-md rounded-xl border border-border bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            <span className="text-xs font-semibold text-emerald-700">
+            <span className="text-sm font-semibold text-emerald-700">
               {"Toàn bộ tính năng — có ngay từ ngày đầu tiên"}
             </span>
           </div>
@@ -57,7 +57,7 @@ export function HowItWorksSection() {
               "Báo cáo tự động",
               "So sánh người dùng",
             ].map((f) => (
-              <div key={f} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <CheckCircle2 className="h-3 w-3 shrink-0 text-primary" />
                 {f}
               </div>
@@ -66,7 +66,7 @@ export function HowItWorksSection() {
         </div>
 
         <div className="mt-10 text-center">
-          <Button size="lg" variant="outline" className="rounded-lg px-6 text-sm font-semibold" asChild>
+          <Button size="lg" variant="outline" className="rounded-lg px-6 text-base font-semibold" asChild>
             <Link href="/dashboard">
               {"Dùng thử đầy đủ tính năng — miễn phí 30 ngày"}
             </Link>

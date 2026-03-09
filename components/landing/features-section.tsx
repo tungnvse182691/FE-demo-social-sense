@@ -201,10 +201,10 @@ export function FeaturesSection() {
   return (
     <section className="bg-[#111827] py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-white">
+        <h2 className="text-center text-4xl font-bold tracking-tight text-white">
           {"Tính năng nổi bật"}
         </h2>
-        <p className="mx-auto mt-3 max-w-lg text-center text-sm text-white/50">
+        <p className="mx-auto mt-3 max-w-lg text-center text-base text-white/50">
           {"Tất cả đều có sẵn ngay từ ngày đầu — không hạn chế, không khoá."}
         </p>
 
@@ -218,8 +218,8 @@ export function FeaturesSection() {
                 className={`flex flex-col items-center gap-10 lg:flex-row ${isReversed ? "lg:flex-row-reverse" : ""}`}
               >
                 <div className="max-w-md">
-                  <h3 className="text-xl font-bold text-white">{feat.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/60">{feat.desc}</p>
+                  <h3 className="text-2xl font-bold text-white">{feat.title}</h3>
+                  <p className="mt-3 text-base leading-relaxed text-white/60">{feat.desc}</p>
                 </div>
                 <div className="w-full max-w-sm flex-1">
                   {MockupComp && <MockupComp />}

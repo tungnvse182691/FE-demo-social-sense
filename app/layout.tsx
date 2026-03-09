@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Afacad } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from '@/components/ui/sonner'
+import { AuthProvider } from '@/lib/auth-context'
 import './globals.css'
 
 const afacad = Afacad({
@@ -23,9 +24,11 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={`${afacad.className} font-sans antialiased`}>
-        {children}
-        <Toaster richColors position="top-right" />
-        <Analytics />
+        <AuthProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   )

@@ -18,7 +18,9 @@ import {
   UserPlus,
   BarChart3,
   Zap,
+  Loader2,
 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -243,6 +245,20 @@ export function AnalyticsContent() {
   const [sortField, setSortField] = useState<SortField>("reach")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
   const [compareHandle, setCompareHandle] = useState("@marketing.vn")
+  const [isComparing, setIsComparing] = useState(false)
+
+  const handleCompare = async () => {
+    if (!compareHandle.trim()) {
+      toast.error("Vui lòng nhập tên người dùng để so sánh.")
+      return
+    }
+    setIsComparing(true)
+    await new Promise((r) => setTimeout(r, 1200))
+    setIsComparing(false)
+    toast.success(`Đang so sánh với ${compareHandle}`, {
+      description: "Dữ liệu đã được cập nhật theo người dùng bạn chọn.",
+    })
+  }
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -583,8 +599,10 @@ export function AnalyticsContent() {
                     placeholder={"Nhập tên người dùng..."}
                   />
                 </div>
-                <Button size="sm" variant="secondary" className="h-8 rounded-lg text-xs font-medium">
-                  {"So sánh"}
+                <Button size="sm" variant="secondary" className="h-8 rounded-lg text-xs font-medium" onClick={handleCompare} disabled={isComparing}>
+                  {isComparing ? (
+                    <><Loader2 className="mr-1.5 h-3 w-3 animate-spin" />{"Đang so sánh..."}</>
+                  ) : "So sánh"}
                 </Button>
               </div>
             </div>

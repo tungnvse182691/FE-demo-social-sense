@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import {
   Eye,
@@ -12,6 +13,7 @@ import {
   Sparkles,
   Clock,
 } from "lucide-react"
+import { PlansDialog } from "@/components/plans-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -130,8 +132,11 @@ const kpiCards = [
 ]
 
 export function DashboardContent() {
+  const [plansOpen, setPlansOpen] = useState(false)
+
   return (
     <div className="flex flex-col gap-6">
+      <PlansDialog open={plansOpen} onOpenChange={setPlansOpen} />
       {/* Trial Banner */}
       <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3.5">
         <div className="flex items-center gap-3">
@@ -147,11 +152,9 @@ export function DashboardContent() {
             </p>
           </div>
         </div>
-        <Button size="sm" className="h-8 rounded-lg text-xs font-semibold" asChild>
-          <Link href="/settings">
-            {"Khám phá các gói"}
-            <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-          </Link>
+        <Button size="sm" className="h-8 rounded-lg text-xs font-semibold" onClick={() => setPlansOpen(true)}>
+          {"Khám phá các gói"}
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
         </Button>
       </div>
 

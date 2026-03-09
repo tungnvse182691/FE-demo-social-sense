@@ -25,7 +25,7 @@ export function TestimonialsSection() {
   return (
     <section className="bg-secondary/50 py-20">
       <div className="mx-auto max-w-5xl px-6">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">
           {"Người dùng nói gì về SocialSense?"}
         </h2>
 
@@ -37,7 +37,7 @@ export function TestimonialsSection() {
                   <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <p className="mt-4 flex-1 text-sm italic leading-relaxed text-foreground">
+              <p className="mt-4 flex-1 text-base italic leading-relaxed text-foreground">
                 {"“"}{t.quote}{"”"}
               </p>
               <div className="mt-5 flex items-center gap-3">
@@ -45,8 +45,8 @@ export function TestimonialsSection() {
                   {t.initials}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                  <p className="text-base font-semibold text-foreground">{t.name}</p>
+                  <p className="text-sm text-muted-foreground">{t.role}</p>
                 </div>
               </div>
             </div>
