@@ -284,6 +284,7 @@ export function AnalyticsContent() {
   const [compareHandle, setCompareHandle] = useState("@marketing.vn")
   const [isComparing, setIsComparing] = useState(false)
   const [expandEngagement, setExpandEngagement] = useState(false)
+  const [expandReach, setExpandReach] = useState(false)
   const [engagementTooltip, setEngagementTooltip] = useState<string | null>(null)
 
   const handleCompare = async () => {
@@ -390,18 +391,28 @@ export function AnalyticsContent() {
                         {kpi.up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
                         {kpi.change}
                       </div>
-                      {isEngagement && (
-                        <button
-                          onClick={() => { setExpandEngagement(!expandEngagement); setEngagementTooltip(null) }}
-                          className="flex h-5 w-5 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          {expandEngagement ? <Minus className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-                        </button>
-                      )}
                     </div>
                   </div>
                   <p className="mt-3 text-2xl font-bold text-foreground">{kpi.value}</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{kpi.label}</p>
+                  <div className="mt-0.5 flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">{kpi.label}</p>
+                    {isEngagement && (
+                      <button
+                        onClick={() => { setExpandEngagement(!expandEngagement); setEngagementTooltip(null) }}
+                        className="flex h-4 w-4 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {expandEngagement ? <Minus className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
+                      </button>
+                    )}
+                    {isReach && (
+                      <button
+                        onClick={() => setExpandReach(!expandReach)}
+                        className="flex h-4 w-4 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {expandReach ? <Minus className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
+                      </button>
+                    )}
+                  </div>
 
                   {/* Engagement breakdown */}
                   {isEngagement && expandEngagement && (
@@ -435,7 +446,7 @@ export function AnalyticsContent() {
                   )}
 
                   {/* Reach top cities */}
-                  {isReach && (
+                  {isReach && expandReach && (
                     <div className="mt-3 flex flex-col gap-1.5">
                       {topCities.map((c, i) => (
                         <div key={c.city} className="flex items-center gap-2">
