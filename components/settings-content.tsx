@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useRef } from "react"
 import { toast } from "sonner"
@@ -112,7 +112,7 @@ export function SettingsContent() {
       <TabsContent value="profile" className="flex flex-col gap-6 mt-0">
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Thông tin cá nhân"}
             </CardTitle>
           </CardHeader>
@@ -206,7 +206,7 @@ export function SettingsContent() {
       <TabsContent value="notifications" className="flex flex-col gap-6 mt-0">
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Tùy chọn thông báo"}
             </CardTitle>
           </CardHeader>
@@ -266,7 +266,7 @@ export function SettingsContent() {
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold text-foreground">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 {"Trạng thái tài khoản"}
               </CardTitle>
               <Badge className="bg-emerald-50 text-emerald-700 font-semibold hover:bg-emerald-50">
@@ -333,7 +333,7 @@ export function SettingsContent() {
         {/* Pricing Plans — synced with plans-dialog */}
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">{"Chọn gói phù hợp"}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">{"Chọn gói phù hợp"}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
@@ -436,7 +436,7 @@ export function SettingsContent() {
       <TabsContent value="security" className="flex flex-col gap-6 mt-0">
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Bảo mật tài khoản"}
             </CardTitle>
           </CardHeader>

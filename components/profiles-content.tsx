@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { toast } from "sonner"
@@ -103,7 +103,7 @@ export function ProfilesContent() {
       <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Tài khoản đã kết nối"}
             </CardTitle>
             <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50">
@@ -193,7 +193,7 @@ export function ProfilesContent() {
       {/* Add New Platform */}
       <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold text-foreground">
+          <CardTitle className="text-lg font-semibold text-foreground">
             {"Thêm nền tảng mới"}
           </CardTitle>
         </CardHeader>

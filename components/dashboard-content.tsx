@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -250,7 +250,7 @@ export function DashboardContent() {
       {/* Social Accounts Bar */}
       <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         <CardHeader className="pb-2 pt-4 px-5">
-          <CardTitle className="text-sm font-semibold text-foreground">Tài khoản đã kết nối</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Tài khoản đã kết nối</CardTitle>
         </CardHeader>
         <CardContent className="px-5 pb-4">
           <div className="flex flex-col gap-2">
@@ -303,7 +303,7 @@ export function DashboardContent() {
       <div className="grid grid-cols-12 gap-4">
         <Card className="col-span-8 border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Hiệu suất 7 ngày qua"}
             </CardTitle>
           </CardHeader>
@@ -460,7 +460,7 @@ export function DashboardContent() {
 
         <Card className="col-span-4 border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               {"Bài đăng sắp tới"}
             </CardTitle>
           </CardHeader>

@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -509,7 +509,7 @@ export function AnalyticsContent() {
           {/* Dual-line chart */}
           <Card className="col-span-8 border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-foreground">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 {"Xu hướng tiếp cận & tương tác"}
               </CardTitle>
             </CardHeader>
@@ -584,7 +584,7 @@ export function AnalyticsContent() {
           {/* Donut chart — Interaction type distribution */}
           <Card className="col-span-4 border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-foreground">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 {"Phân phối loại tương tác"}
               </CardTitle>
             </CardHeader>
@@ -635,7 +635,7 @@ export function AnalyticsContent() {
         {/* ── Section C — Top posts table ── */}
         <Card className="border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">{"Top bài viết"}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">{"Top bài viết"}</CardTitle>
             <Link href="/analytics" className="flex items-center gap-1 text-xs font-medium text-primary hover:underline">
               {"Xem tất cả"} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -737,7 +737,7 @@ export function AnalyticsContent() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CardTitle className="text-sm font-semibold text-foreground">
+                <CardTitle className="text-lg font-semibold text-foreground">
                   {"So với người dùng khác"}
                 </CardTitle>
                 <Badge className="bg-accent text-primary hover:bg-accent text-[10px] font-semibold">
