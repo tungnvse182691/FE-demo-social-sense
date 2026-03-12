@@ -37,8 +37,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("ss_user", JSON.stringify(u))
   }
 
-  const login = async (email: string, _password: string) => {
+  const login = async (email: string, password: string) => {
     await new Promise((r) => setTimeout(r, 800))
+
+    // Admin credentials → set admin session and redirect to admin panel
+    if (email === "admin@socialsense.vn" && password === "admin123") {
+      const adminUser = {
+        name: "Nguyễn Admin",
+        email,
+        role: "super_admin" as const,
+        avatar: "NA",
+      }
+      localStorage.setItem("ss_admin", JSON.stringify(adminUser))
+      router.push("/admin/dashboard")
+      return
+    }
+
     const raw = email.split("@")[0].replace(/[._-]/g, " ")
     const name = raw
       .split(" ")
