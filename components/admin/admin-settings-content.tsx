@@ -13,6 +13,9 @@ import {
   EyeOff,
   Copy,
   CheckCircle2,
+  Package,
+  Pencil,
+  X,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -73,6 +76,66 @@ const INITIAL_COUPONS: Coupon[] = [
   { id: 4, code: "SPRING2026", discount: "25%", type: "percent", used: 8, maxUses: 150, expiry: "31/05/2026", active: true },
 ]
 
+interface Plan {
+  id: number
+  name: string
+  slug: string
+  price: number
+  annualDiscount: number
+  trialDays: number
+  maxPlatforms: number
+  maxPosts: number
+  features: string[]
+  popular: boolean
+  active: boolean
+  users: number
+}
+
+const INITIAL_PLANS: Plan[] = [
+  {
+    id: 1,
+    name: "Trial miễn phí",
+    slug: "trial",
+    price: 0,
+    annualDiscount: 0,
+    trialDays: 30,
+    maxPlatforms: 3,
+    maxPosts: 20,
+    features: ["Kết nối 3 tài khoản MXH", "20 bài đăng/tháng", "Analytics cơ bản", "AI Studio (giới hạn)"],
+    popular: false,
+    active: true,
+    users: 312,
+  },
+  {
+    id: 2,
+    name: "Gói Người mới",
+    slug: "pro",
+    price: 79000,
+    annualDiscount: 15,
+    trialDays: 0,
+    maxPlatforms: 5,
+    maxPosts: 100,
+    features: ["Kết nối 5 tài khoản MXH", "100 bài đăng/tháng", "Analytics đầy đủ", "AI Studio", "Lịch đăng bài"],
+    popular: false,
+    active: true,
+    users: 589,
+  },
+  {
+    id: 3,
+    name: "Gói Nâng cao",
+    slug: "team",
+    price: 99000,
+    annualDiscount: 15,
+    trialDays: 0,
+    maxPlatforms: 10,
+    maxPosts: -1,
+    features: ["Kết nối không giới hạn MXH", "Đăng bài không giới hạn", "Analytics Nâng cao", "AI Studio Pro", "Phân tích đối thủ", "Báo cáo PDF", "Hỗ trợ ưu tiên"],
+    popular: true,
+    active: true,
+    users: 383,
+  },
+]
+
 const roleLabels: Record<string, { label: string; className: string }> = {
   super_admin: { label: "Super Admin", className: "bg-destructive/10 text-destructive" },
   support: { label: "Support", className: "bg-amber-50 text-amber-700" },
@@ -101,6 +164,21 @@ export function AdminSettingsContent() {
   // New coupon form
   const [newCode, setNewCode] = useState("")
   const [newDiscount, setNewDiscount] = useState("")
+
+  // Plans management
+  const [plans, setPlans] = useState<Plan[]>(INITIAL_PLANS)
+  const [showPlanDialog, setShowPlanDialog] = useState(false)
+  const [editingPlan, setEditingPlan] = useState<Plan | null>(null)
+  const [planName, setPlanName] = useState("")
+  const [planPrice, setPlanPrice] = useState("")
+  const [planAnnualDiscount, setPlanAnnualDiscount] = useState("")
+  const [planTrialDays, setPlanTrialDays] = useState("")
+  const [planMaxPlatforms, setPlanMaxPlatforms] = useState("")
+  const [planMaxPosts, setPlanMaxPosts] = useState("")
+  const [planPopular, setPlanPopular] = useState(false)
+  const [planActive, setPlanActive] = useState(true)
+  const [planFeatures, setPlanFeatures] = useState<string[]>([])
+  const [newFeatureInput, setNewFeatureInput] = useState("")
 
   const handleSaveProfile = async () => {
     setSaving(true)
@@ -167,6 +245,78 @@ export function AdminSettingsContent() {
     navigator.clipboard.writeText(code).then(() => toast.success(`Đã sao chép mã ${code}`))
   }
 
+  const openPlanDialog = (plan: Plan | null) => {
+    if (plan) {
+      setEditingPlan(plan)
+      setPlanName(plan.name)
+      setPlanPrice(plan.price.toString())
+      setPlanAnnualDiscount(plan.annualDiscount.toString())
+      setPlanTrialDays(plan.trialDays.toString())
+      setPlanMaxPlatforms(plan.maxPlatforms.toString())
+      setPlanMaxPosts(plan.maxPosts.toString())
+      setPlanPopular(plan.popular)
+      setPlanActive(plan.active)
+      setPlanFeatures([...plan.features])
+    } else {
+      setEditingPlan(null)
+      setPlanName("")
+      setPlanPrice("0")
+      setPlanAnnualDiscount("0")
+      setPlanTrialDays("0")
+      setPlanMaxPlatforms("3")
+      setPlanMaxPosts("50")
+      setPlanPopular(false)
+      setPlanActive(true)
+      setPlanFeatures([])
+    }
+    setNewFeatureInput("")
+    setShowPlanDialog(true)
+  }
+
+  const handleSavePlan = async () => {
+    if (!planName.trim()) { toast.error("Vui lòng nhập tên gói"); return }
+    setSaving(true)
+    await new Promise((r) => setTimeout(r, 600))
+    const planData: Plan = {
+      id: editingPlan?.id ?? Date.now(),
+      name: planName,
+      slug: editingPlan?.slug ?? planName.toLowerCase().replace(/\s+/g, "_"),
+      price: parseInt(planPrice) || 0,
+      annualDiscount: parseInt(planAnnualDiscount) || 0,
+      trialDays: parseInt(planTrialDays) || 0,
+      maxPlatforms: parseInt(planMaxPlatforms) || 3,
+      maxPosts: parseInt(planMaxPosts) || 50,
+      popular: planPopular,
+      active: planActive,
+      features: planFeatures,
+      users: editingPlan?.users ?? 0,
+    }
+    if (editingPlan) {
+      setPlans((prev) => prev.map((p) => (p.id === editingPlan.id ? planData : p)))
+      toast.success(`Đã cập nhật gói ${planName}`)
+    } else {
+      setPlans((prev) => [...prev, planData])
+      toast.success(`Đã tạo gói ${planName}`)
+    }
+    setSaving(false)
+    setShowPlanDialog(false)
+  }
+
+  const handleDeletePlan = (id: number) => {
+    setPlans((prev) => prev.filter((p) => p.id !== id))
+    toast.success("Đã xóa gói")
+  }
+
+  const addPlanFeature = () => {
+    if (!newFeatureInput.trim()) return
+    setPlanFeatures((prev) => [...prev, newFeatureInput.trim()])
+    setNewFeatureInput("")
+  }
+
+  const removePlanFeature = (index: number) => {
+    setPlanFeatures((prev) => prev.filter((_, i) => i !== index))
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <Tabs defaultValue="accounts">
@@ -176,6 +326,7 @@ export function AdminSettingsContent() {
             { value: "features", label: "Tính năng", icon: Flag },
             { value: "coupons", label: "Mã giảm giá", icon: Tag },
             { value: "billing", label: "Cấu hình thanh toán", icon: Wallet },
+          { value: "plans", label: "Quản lý gói", icon: Package },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -448,6 +599,77 @@ export function AdminSettingsContent() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* ── TAB 5: Plans ── */}
+        <TabsContent value="plans" className="mt-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Quản lý các gói dịch vụ hiển thị cho người dùng</p>
+            <Button size="sm" onClick={() => openPlanDialog(null)} className="h-8 gap-1.5 rounded-lg text-sm">
+              <Plus className="h-3.5 w-3.5" /> Tạo gói mới
+            </Button>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {plans.map((plan) => (
+              <Card key={plan.id} className={`relative border-none bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08)] ${!plan.active ? "opacity-60" : ""}`}>
+                {plan.popular && (
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                    <Badge className="bg-primary text-xs text-white">Phổ biến nhất</Badge>
+                  </div>
+                )}
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-base font-bold text-foreground">{plan.name}</p>
+                      <p className="mt-1 text-xl font-bold text-foreground">
+                        {plan.price === 0 ? "Miễn phí" : `₫${plan.price.toLocaleString("vi-VN")}`}
+                        {plan.price > 0 && <span className="text-sm font-normal text-muted-foreground">/tháng</span>}
+                      </p>
+                      {plan.annualDiscount > 0 && (
+                        <p className="text-xs text-muted-foreground">Tiết kiệm {plan.annualDiscount}% khi thanh toán năm</p>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => openPlanDialog(plan)}
+                        className="rounded p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePlan(plan.id)}
+                        className="rounded p-1.5 text-muted-foreground hover:bg-secondary hover:text-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    <Badge variant="secondary" className="text-xs">{plan.users} người dùng</Badge>
+                    {!plan.active && <Badge variant="secondary" className="bg-secondary text-xs text-muted-foreground">Ẩn</Badge>}
+                    {plan.trialDays > 0 && <Badge variant="secondary" className="bg-amber-50 text-xs text-amber-700">{plan.trialDays} ngày trial</Badge>}
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-muted-foreground">
+                    <span>🔗 {plan.maxPlatforms} tài khoản MXH</span>
+                    <span>📝 {plan.maxPosts === -1 ? "Không giới hạn" : `${plan.maxPosts} bài/tháng`}</span>
+                  </div>
+
+                  {plan.features.length > 0 && (
+                    <ul className="mt-3 flex flex-col gap-1 border-t border-border pt-3">
+                      {plan.features.map((f, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                          <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
       </Tabs>
 
       {/* Add admin dialog */}
@@ -478,6 +700,90 @@ export function AdminSettingsContent() {
             <div className="flex gap-3 pt-2">
               <Button variant="outline" className="flex-1" onClick={() => setShowAddAdmin(false)}>Hủy</Button>
               <Button className="flex-1" onClick={handleAddAdmin}>Tạo tài khoản</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Plan create/edit dialog */}
+      <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{editingPlan ? `Chỉnh sửa: ${editingPlan.name}` : "Tạo gói mới"}</DialogTitle>
+          </DialogHeader>
+          <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto pr-1 pt-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium">Tên gói</Label>
+              <Input value={planName} onChange={(e) => setPlanName(e.target.value)} className="h-10 rounded-lg" placeholder="VD: Gói Doanh nghiệp" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium">Giá/tháng (VND)</Label>
+                <Input value={planPrice} onChange={(e) => setPlanPrice(e.target.value)} className="h-10 rounded-lg" placeholder="0 = miễn phí" type="number" min="0" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium">Giảm giá năm (%)</Label>
+                <Input value={planAnnualDiscount} onChange={(e) => setPlanAnnualDiscount(e.target.value)} className="h-10 rounded-lg" placeholder="VD: 15" type="number" min="0" max="100" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium">Số ngày trial</Label>
+                <Input value={planTrialDays} onChange={(e) => setPlanTrialDays(e.target.value)} className="h-10 rounded-lg" placeholder="0 = không có trial" type="number" min="0" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium">Tài khoản MXH tối đa</Label>
+                <Input value={planMaxPlatforms} onChange={(e) => setPlanMaxPlatforms(e.target.value)} className="h-10 rounded-lg" type="number" min="1" />
+              </div>
+              <div className="col-span-2 flex flex-col gap-1.5">
+                <Label className="text-sm font-medium">Số bài đăng/tháng (-1 = không giới hạn)</Label>
+                <Input value={planMaxPosts} onChange={(e) => setPlanMaxPosts(e.target.value)} className="h-10 rounded-lg" type="number" min="-1" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Gắn badge "Phổ biến nhất"</p>
+                <p className="text-xs text-muted-foreground">Hiển thị nổi bật trên trang pricing</p>
+              </div>
+              <Switch checked={planPopular} onCheckedChange={setPlanPopular} />
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Kích hoạt gói</p>
+                <p className="text-xs text-muted-foreground">Ẩn gói sẽ không hiển thị cho người dùng mới</p>
+              </div>
+              <Switch checked={planActive} onCheckedChange={setPlanActive} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-medium">Tính năng bao gồm</Label>
+              <div className="flex flex-col gap-1.5">
+                {planFeatures.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 rounded-lg bg-secondary px-3 py-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                    <span className="flex-1 text-sm text-foreground">{f}</span>
+                    <button onClick={() => removePlanFeature(i)} className="text-muted-foreground hover:text-destructive">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={newFeatureInput}
+                  onChange={(e) => setNewFeatureInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addPlanFeature()}
+                  className="h-9 flex-1 rounded-lg text-sm"
+                  placeholder="VD: Xuất báo cáo PDF"
+                />
+                <Button size="sm" variant="outline" onClick={addPlanFeature} className="h-9 rounded-lg text-sm">Thêm</Button>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-1">
+              <Button variant="outline" className="flex-1" onClick={() => setShowPlanDialog(false)}>Hủy</Button>
+              <Button className="flex-1" onClick={handleSavePlan} disabled={saving}>
+                {saving ? "Đang lưu..." : editingPlan ? "Lưu thay đổi" : "Tạo gói"}
+              </Button>
             </div>
           </div>
         </DialogContent>
